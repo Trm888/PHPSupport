@@ -3,7 +3,9 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 class Global(StatesGroup):
     event = State()
-    # budget = State()
+    client_menu = State()
+    description_order = State()
+    order_date = State()
     # bouquet = State()
     # person_data = State()
     # registration_name = State()
