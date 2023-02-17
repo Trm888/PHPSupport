@@ -18,6 +18,22 @@ class User(models.Model):
     def __str__(self):
         return f'{self.username}'
 
+class Employee(models.Model):
+    class Meta:
+        verbose_name = 'Исполнитель'
+        verbose_name_plural = 'Исполнители'
+
+    chat_id = models.CharField(
+        verbose_name='ID TG CHAT',
+        max_length=10,
+        blank=True,
+        null=True)
+    username = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True)
+    def __str__(self):
+        return f'{self.username}'
 
 class Order(models.Model):
 
@@ -52,8 +68,14 @@ class Order(models.Model):
         max_length=200, blank=True, null=True, default='new'
     )
 
-    performer = models.CharField(verbose_name='Исполнитель',
-        max_length=200, blank=True, null=True)
+    employee = models.ForeignKey(
+        Employee,
+        related_name='employee_orders',
+        verbose_name='Исполнитель',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
-        return f'{self.user} - {self.description_order} - {self.order_date} - {self.order_status} - {self.performer}'
+        return f'{self.user} - {self.description_order} - {self.order_date} - {self.order_status} - {self.employee}'

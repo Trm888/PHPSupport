@@ -5,25 +5,17 @@ from aiogram import types
 from aiogram.dispatcher import FSMContext
 
 from handlers.users.start import command_start
-from keyboarsds.keyboards import get_main_keyboard
+from keyboarsds.keyboards import get_main_keyboard, get_inline_keyboard
 from loader import dp, bot
 from states.global_states import Global
 
-import os
-import django
 
-from utils.orm_functions import get_client_order
-
-os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-
-django.setup()
-
-from phpsupport.models import User, Order
+from utils.orm_functions import get_client_orders, create_client_order, create_user
 
 
 @dp.message_handler(lambda message: message.text == 'Хочу разместить заказ.', state=Global.event)
 async def client_menu(message: types.Message):
+    create_user(message)
     bottoms = ['Cоздать заказ.', 'Мои заказы.']
     await message.answer("<b>Меню клиента</b>",
                          reply_markup=get_main_keyboard(bottoms))
@@ -72,7 +64,7 @@ async def order_finish(message: types.Message, state: FSMContext):
                                 f'Описание заказа: {user_data["description_order"]}\n'
                                 f'Дата окончания заказа: {user_data["order_date"]}</b>')
 
-    get_client_order(message, user_data["description_order"], user_data["order_date"])
+    create_client_order(message, user_data["description_order"], user_data["order_date"])
     await state.finish()
     await asyncio.sleep(3)
     await command_start(message)
@@ -80,7 +72,22 @@ async def order_finish(message: types.Message, state: FSMContext):
 
 @dp.message_handler(lambda message: message.text == 'Мои заказы.', state=Global.client_menu)
 async def client_menu(message: types.Message):
-    await message.answer(
-        '<b>Здесь будет функция получения заказов размещенные клиентому.</b>')
-    # получить заказы пользователя
+    orders = get_client_orders(message)
+    for order in orders:
+        if order.employee:
+            await bot.send_message(chat_id=message.from_user.id,
+                                   text=f'<b>Пользователь: {order.user.username}\n'
+                                        f'Описание заказа: {order.description_order}\n'
+                                        f'Дата окончания заказа: {order.order_date}\n'
+                                        f'Статус заказа: {order.order_status}\n'
+                                        f'Исполнитель: {order.employee}</b>',
+                                        reply_markup=get_inline_keyboard(order.employee))
+        else:
+            await bot.send_message(chat_id=message.from_user.id,
+                                   text=f'<b>Пользователь: {order.user.username}\n'
+                                        f'Описание заказа: {order.description_order}\n'
+                                        f'Дата окончания заказа: {order.order_date}\n'
+                                        f'Статус заказа: {order.order_status}</b>')
+    print(orders)
+
     pass

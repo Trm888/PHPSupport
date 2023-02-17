@@ -6,6 +6,8 @@ class Global(StatesGroup):
     client_menu = State()
     description_order = State()
     order_date = State()
+    employee_menu = State()
+    show_all_orders = State()
     # bouquet = State()
     # person_data = State()
     # registration_name = State()
