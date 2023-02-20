@@ -15,8 +15,11 @@ class User(models.Model):
         max_length=200,
         blank=True,
         null=True)
+    subscription = models.BooleanField(default=False)
+
     def __str__(self):
         return f'{self.username}'
+
 
 class Employee(models.Model):
     class Meta:
@@ -32,11 +35,13 @@ class Employee(models.Model):
         max_length=200,
         blank=True,
         null=True)
+    subscription = models.BooleanField(default=False)
+
     def __str__(self):
         return f'{self.username}'
 
-class Order(models.Model):
 
+class Order(models.Model):
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
@@ -52,7 +57,7 @@ class Order(models.Model):
 
     description_order = models.TextField(
         verbose_name='Описание заказа',
-        max_length=200, blank=True, null=True)
+        blank=True, null=True)
 
     order_date = models.DateField(
         verbose_name='Дата выполнения заказа',
