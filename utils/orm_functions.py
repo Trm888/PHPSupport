@@ -31,15 +31,14 @@ def get_employee(message):
 
 
 def create_client_order(message, description_order, order_date):
-    user_id = User.objects.filter(chat_id=message['from'].id).first()
+    user_id = User.objects.get(chat_id=message['from'].id)
 
     created_order = Order.objects.create(user=user_id, description_order=description_order,
                                          order_date=order_date)
-    return created_order
 
 
 def get_client_orders(message):
-    orders = Order.objects.filter(user__chat_id=message['from'].id, order_status='in_progress')
+    orders = Order.objects.filter(user__chat_id=message['from'].id)
     return orders
 
 
