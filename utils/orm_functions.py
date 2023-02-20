@@ -3,7 +3,7 @@ import os
 import django
 
 os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core1.settings')
 
 django.setup()
 
